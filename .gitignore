@@ -1,2 +1,4 @@
+#db
+postgres/
 .env
 node_modules/
