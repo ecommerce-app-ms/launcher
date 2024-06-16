@@ -27,11 +27,14 @@ services:
       - DATABASE_URL=file:./dev.db
   payments-ms:
     build: ./payments-ms
+    ports:
+      - 3003:3003
     volumes:
       - ./payments-ms/src:/usr/src/app/src
     command: npm run start:dev
     environment:
       - PORT=3003
+      - NAST_SERVERS=nats://nast-server:4222
       - STRIPE_API_KEY=sk_test_51NBfkXFyC8yELN9flNEQneaLYFzg10OcD4M2dHwOBnlJZkdQISGs35zcqu4bRnclmGpCfzjieTUrfwXP8OAps75L00qkSCuesV
       - STRIPE_SUCCESS_URL=http://localhost:3003/payments/success
       - STRIPE_CANCEL_URL=http://localhost:3003/payments/cancel
