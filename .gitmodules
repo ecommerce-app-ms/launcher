@@ -10,3 +10,6 @@
 [submodule "payments-ms"]
 	path = payments-ms
 	url = https://github.com/ecommerce-app-ms/payments-ms.git
+[submodule "auth-clients-ms"]
+	path = auth-clients-ms
+	url = https://github.com/ecommerce-app-ms/auth-clients-ms.git
