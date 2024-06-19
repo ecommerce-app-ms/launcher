@@ -39,6 +39,17 @@ services:
       - STRIPE_SUCCESS_URL=http://localhost:3003/payments/success
       - STRIPE_CANCEL_URL=http://localhost:3003/payments/cancel
       - STRIPE_ENDPOINT_SECRET=whsec_5LS1Ci9mVmbOykT9ZJW75rYK5iI62DQE
+  
+  auth-clients-ms:
+    build: ./auth-clients-ms
+    volumes:
+      - ./auth-clients-ms/src:/usr/src/app/src
+    command: npm run start:dev
+    environment:
+      - PORT=3004
+      - NAST_SERVERS=nats://nast-server:4222
+      - DATABASE_URL=mongodb+srv://eduardopmx:20805694@freedbmongo.f8sknao.mongodb.net/AuthDb
+      - JWT_SECRET=estoDeberiaSerUnStringSeguro
   orders-ms:
     depends_on:
       - orders-db
