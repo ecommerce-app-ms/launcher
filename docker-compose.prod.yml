@@ -1,0 +1,79 @@
+version: '3'
+services:
+  nast-server:
+    image: nats:latest
+
+
+  client-gateway:
+    build:
+      context: ./client-gateway
+      dockerfile: dockerfile.prod
+    image: southamerica-east1-docker.pkg.dev/microservices-dev-427010/image-register/client-gateway-prod
+  # image:path + name image 
+    ports:
+      - ${CLIENT_GATEWAY_PORT}:${CLIENT_GATEWAY_PORT}
+    environment:
+      - PORT=3000
+      - NAST_SERVERS=nats://nast-server:4222
+
+  products-ms:
+    build:
+      context: ./products-ms
+      dockerfile: dockerfile.prod
+    image: southamerica-east1-docker.pkg.dev/microservices-dev-427010/image-register/products-ms-prod
+    environment:
+      - PORT=3001
+      - NAST_SERVERS=nats://nast-server:4222
+      - DATABASE_URL=file:./dev.db
+
+  payments-ms:
+    build:
+      context: ./payments-ms
+      dockerfile: dockerfile.prod
+    image: southamerica-east1-docker.pkg.dev/microservices-dev-427010/image-register/payments-ms-prod
+    ports:
+      - 3003:3003
+    environment:
+      - PORT=3003
+      - NAST_SERVERS=nats://nast-server:4222
+      - STRIPE_API_KEY=${STRIPE_API_KEY}
+      - STRIPE_SUCCESS_URL=http://localhost:3003/payments/success
+      - STRIPE_CANCEL_URL=http://localhost:3003/payments/cancel
+      - STRIPE_ENDPOINT_SECRET=${STRIPE_ENDPOINT_SECRET}
+  
+  auth-clients-ms:
+    build:
+      context: ./auth-clients-ms
+      dockerfile: dockerfile.prod
+    image: southamerica-east1-docker.pkg.dev/microservices-dev-427010/image-register/auth-clients-ms-prod
+    environment:
+      - PORT=3004
+      - NAST_SERVERS=nats://nast-server:4222
+      - DATABASE_URL=${MONGO_UR}
+      - JWT_SECRET=${JWT_SECRET}
+  orders-ms:
+    build:
+      context: ./orders-ms
+      dockerfile: dockerfile.prod
+      args:
+        - ORDERS_DB_URL=${ORDERS_DB_URL}
+    image: southamerica-east1-docker.pkg.dev/microservices-dev-427010/image-register/orders-ms-prod
+    environment:
+      - PORT=3002
+      - NAST_SERVERS=nats://nast-server:4222
+      - DATABASE_URL=${ORDERS_DB_URL}
+
+  # orders-db:
+  #   container_name: orders-db
+  #   image: postgres:16.2
+  #   restart: always
+  #   volumes:
+  #     - ./orders-ms/postgres:/var/lib/postgresql/data
+  #   ports:
+  #     - 5432:5432
+  #   environment:
+  #     - POSTGRES_USER=postgres
+  #     - POSTGRES_PASSWORD=123456
+  #     - POSTGRES_DB=ordersdb
+
+    
