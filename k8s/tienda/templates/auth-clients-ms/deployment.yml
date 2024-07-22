@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: auth-clients-ms-prod
+  name: auth-clients-ms-prod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth-clients-ms-prod
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: auth-clients-ms-prod
+    spec:
+      containers:
+      - image: southamerica-east1-docker.pkg.dev/microservices-dev-427010/image-register/auth-clients-ms-prod
+        name: client-gateway-prod
+        env:
+        - name: PORT
+          value: "3000"
+        - name: NAST_SERVERS
+          value: "nats://nats"
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: auth-clients-secrets
+              key: DATABASE_URL
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+                name: auth-clients-secrets
+                key: JWT_SECRET
+        resources: {}
+
+
+
+status: {}

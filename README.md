@@ -37,3 +37,14 @@ Si se hace al revés, se perderán las referencias de los sub-módulos en el rep
 2. clonar los submodulos con el comando  "git submodule update --init --recursive"
 3. crear un .env basado en el .env.templated
 4. ejecutar el comando  `docker compose up --build`
+
+
+## prod ejecutar 
+# single container
+docker build -f dockerfile.prod -t client-gateway .
+
+
+# all stage 
+1. clonar el repositorio
+2. crear un .env basado en el templated
+3. ejecutar el comando  `docker compose -f docker-compose.prod.yml build`
