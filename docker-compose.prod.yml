@@ -49,7 +49,7 @@ services:
     environment:
       - PORT=3004
       - NAST_SERVERS=nats://nast-server:4222
-      - DATABASE_URL=${MONGO_UR}
+      - DATABASE_URL=${MONGO_URI}
       - JWT_SECRET=${JWT_SECRET}
   orders-ms:
     build:

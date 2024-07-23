@@ -5,6 +5,11 @@ services:
     ports:
       - "8222:8222"
 
+  mongo:
+    image: mongo:latest
+    container_name: mongo_db_auth
+    ports:
+      - "27017:27017"
   client-gateway:
     build: ./client-gateway
     ports:
@@ -35,12 +40,14 @@ services:
     environment:
       - PORT=3003
       - NAST_SERVERS=nats://nast-server:4222
-      - STRIPE_API_KEY=sk_test_51NBfkXFyC8yELN9flNEQneaLYFzg10OcD4M2dHwOBnlJZkdQISGs35zcqu4bRnclmGpCfzjieTUrfwXP8OAps75L00qkSCuesV
+      - STRIPE_API_KEY=${STRIPE_API_KEY}
       - STRIPE_SUCCESS_URL=http://localhost:3003/payments/success
       - STRIPE_CANCEL_URL=http://localhost:3003/payments/cancel
-      - STRIPE_ENDPOINT_SECRET=whsec_5LS1Ci9mVmbOykT9ZJW75rYK5iI62DQE
+      - STRIPE_ENDPOINT_SECRET=${STRIPE_ENDPOINT_SECRET}
   
   auth-clients-ms:
+    depends_on:
+      - mongo
     build: ./auth-clients-ms
     volumes:
       - ./auth-clients-ms/src:/usr/src/app/src
@@ -48,7 +55,7 @@ services:
     environment:
       - PORT=3004
       - NAST_SERVERS=nats://nast-server:4222
-      - DATABASE_URL=mongodb+srv://eduardopmx:20805694@freedbmongo.f8sknao.mongodb.net/AuthDb
+      - DATABASE_URL=mongodb://mongo_db_auth:27017/AuthDb
       - JWT_SECRET=estoDeberiaSerUnStringSeguro
   orders-ms:
     depends_on:
